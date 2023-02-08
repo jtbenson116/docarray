@@ -269,6 +269,7 @@ class BackendMixin(BaseBackendMixin):
             # ids not valid arg for mget
             # create 'body' json of 'ids' to offsets idx
 
+
             # gw: refactored to deal with large datasets
             # resp = self._client.mget(index=self._index_name_offset2id, body={'ids':[x for x in offsets]})
             # ids = [x['_source']['blob'] for x in resp['docs']]
@@ -286,6 +287,7 @@ class BackendMixin(BaseBackendMixin):
                 print("_get_offset2ids_meta: ids size is now=", len(ids) )
                 resp = self._client.mget(index=self._index_name_offset2id, body={'ids':[x for x in chunk]})
             print("_get_offset2ids_meta: Done final size=", len(ids), "original n_docs=", n_docs)
+
             return ids
             # gw: refactored to deal with large datasets
         else:
@@ -317,3 +319,4 @@ class BackendMixin(BaseBackendMixin):
     def __setstate__(self, state):
         self.__dict__ = state
         self._client = self._build_client()
+
