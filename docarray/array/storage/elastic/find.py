@@ -53,18 +53,23 @@ class FindMixin(BaseFindMixin):
         if is_all_zero:
             query = query + EPSILON
 
+        # jb: add gsi knn config to query body
         knn_query = {
-            'field': 'embedding',
-            'query_vector': query,
-            'k': limit,
-            'num_candidates': 10000
-            if 'num_candidates' not in kwargs
-            else kwargs['num_candidates'],
+            "query": {
+                "gsi_knn": {
+                    'field': 'embedding',
+                    'query_vector': query,
+                    'topk': limit,
+                    'num_candidates': 10000
+                    if 'num_candidates' not in kwargs
+                    else kwargs['num_candidates']
+                }
+            }
         }
-
-        resp = self._client.knn_search(
+        # jb: change _client.knn_search to _client.search, ES 7.X does not support knn_search method
+        resp = self._client.search(
             index=self._config.index_name,
-            knn=knn_query,
+            body=knn_query,
             filter=filter,
         )
         list_of_hits = resp['hits']['hits']
